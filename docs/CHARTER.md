@@ -42,8 +42,9 @@ them yet; it must not make choices that lock them out.
 - **Deterministic where it can be.** Scripts, schemas and hooks do what does not need
   judgement. The model does what does.
 - **Repo-scoped beats user-scoped.** A user's personal preferences must not change how the
-  project's tooling behaves. Where a machine setting is unavoidable, guide the user through
-  it and check it.
+  project's tooling behaves. The repository builds its own dev container, including the
+  container's home directory; the host's home is never mounted into it. Where a machine
+  setting is unavoidable, guide the user through it and check it.
 - **Definition of Done, always.** Stated at the start of every unit of work and checked at
   the end, from the first interview through the retrospective.
 - **Affordable.** The MVP runs on one Claude Pro subscription with a single agent.

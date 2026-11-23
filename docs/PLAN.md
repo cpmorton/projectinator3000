@@ -13,7 +13,7 @@ done, but workstreams inside a phase can run in parallel.
 | **0. Charter** (this pull request) | Charter, plan and research agreed | Mort has edited and merged this pull request |
 | **1. Walking skeleton** | Conventions, state schema, onboarding interview v0, setup and check scripts, lint CI. Prompts and files only | This repository onboards itself, and the fixture cases pass in GitHub Actions |
 | **2. Handoff** | Onboarding turns a fresh copy of this repository into a clean project shell; on-ramp guides for Claude Code on the web, Codespaces, Linux and WSL | A fixture case goes from "Use this template" to a working shell in a new Codespace with no hand-edited files |
-| **3. Base layer** | The idempotent setup becomes a published container image; downstream pins it in one `FROM` line; CI runs in the same image; machine guardrails baked in | One commit passes the same checks in Codespaces, local WSL/Linux and a GitHub Actions container job |
+| **3. Base layer** | The repository builds its own dev container image from the idempotent setup, with a home directory built into the image rather than mounted from the host; the image is published, downstream pins it in one `FROM` line, CI runs in the same image, machine guardrails baked in | One commit passes the same checks in Codespaces, local WSL/Linux and a GitHub Actions container job |
 | **4. Team** | Supervisor plus two workers with method cards, a budget ledger, an optional debate gate, the `pj` Go CLI and its MCP adapter | A fixture case is planned and executed by the team inside a stated token budget, and the result is checked against its Definition of Done |
 | **Later** | Model-provider abstraction, agent teams, cross-project reporting, AKS/compute targets, a tutorial track for lay users | Sequenced when phase 4 is done |
 
@@ -95,7 +95,7 @@ Notes on the choices:
 |---|---|---|
 | Repository | `AGENTS.md`, `CLAUDE.md`, `.claude/`, `.agents/skills/`, `.mcp.json`, `.project/` | The only layer that reaches local, Codespaces and Claude Code on the web alike |
 | Image (phase 3) | Tools, `/etc/claude-code/managed-settings.json`, managed `CLAUDE.md` | Managed settings have the highest precedence, so user preferences cannot override project guardrails |
-| User home in the container | Credentials only | The container's home is built, not inherited; the host's `~/.claude` is not mounted |
+| User home in the container | Everything the tooling needs at user level: `~/.claude/` (settings, agents, skills), shell profile, git and tool config. Built into the image by the repository, never mounted from the host. Only credentials and other runtime state persist, in a named volume | A built home is identical everywhere and versioned with the repository; a mounted host home brings the user's personal preferences and drift into the project |
 | User's own machine | As little as possible; `scripts/doctor.sh` checks what is unavoidable | Determinism |
 
 Until phase 3 there is no image, so phase 1 and 2 rely on the repository layer and on
